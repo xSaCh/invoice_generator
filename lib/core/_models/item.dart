@@ -23,6 +23,7 @@ class Product extends HiveObject {
     this.unit = Unit.pcs,
     this.hsc,
   });
+  Product.empty() : this("", 0);
 }
 
 @HiveType(typeId: 4)

@@ -23,18 +23,16 @@ void main() async {
   Hive.registerAdapter(GSTTypeAdapter());
   Hive.registerAdapter(UnitAdapter());
 
-  debugPrint("AAA");
-  await Hive.openBox<Invoice>('invoices');
   // var i = Invoice(
   //     "22/IT001",
   //     DateTime.now(),
   //     0,
   //     Customer("AA", "Addr", "+91 92440", "email@gmail.com", "CCC@45902AK"),
-  //     [Item(Product("Tshirt", 69, gstType: GSTType.gst_5))]);
+  //     [].cast<Item>());
 
   // // i.save();
-  // b.add(i);
-  debugPrint("Q q");
+  // await Hive.openBox<Invoice>('invoices')
+  //   ..add(i);
   runApp(const MyApp());
 }
 

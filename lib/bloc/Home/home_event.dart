@@ -9,3 +9,5 @@ class HomeRemoveInvoice extends HomeEvent {
 
   HomeRemoveInvoice(this.invoice);
 }
+
+class HomeUpdateInvoices extends HomeEvent {}

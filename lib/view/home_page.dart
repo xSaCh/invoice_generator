@@ -1,21 +1,15 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_bloc/bloc/Home/home_bloc.dart';
+import 'package:invoice_bloc/bloc/Invoice/invoice_bloc.dart';
 // import 'package:invoice_bloc/db/db.dart';
-import 'package:invoice_bloc/core/_models/item.dart';
 import 'package:invoice_bloc/core/invoice_helper.dart';
 // import 'package:share_plus/share_plus.dart';
-import 'package:path_provider/path_provider.dart';
 
 // import 'package:invoice_bloc/invoice_pdf.dart';
-import 'package:invoice_bloc/core/_models/customer.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
+import 'package:invoice_bloc/view/invoice_detail_page.dart';
 // import 'package:invoice_bloc/core/_models/user.dart';
 // import 'package:invoice_bloc/pages/customer_page.dart';
 // import 'package:invoice_bloc/pages/invoice_detail_page.dart';
@@ -78,6 +72,13 @@ class _HomePageState extends State<HomePage> {
                             return GestureDetector(
                                 child: invoiceCard(state.invoices[i]),
                                 onTap: () async {
+                                  await Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (ctx) => BlocProvider(
+                                          create: (bctx) =>
+                                              InvoiceBloc(invoice: state.invoices[i]),
+                                          child: const InvoiceDetailPage())));
+                                  debugPrint("Something ");
+                                  bloc.add(HomeGetInvoices());
                                   // Invoice? newInv = await Navigator.of(context).push(
                                   //     MaterialPageRoute(
                                   //         builder: (BuildContext ctx) =>
@@ -241,15 +242,5 @@ class _HomePageState extends State<HomePage> {
     return df.format(dt);
   }
 
-  void _removeInvoice(Invoice inv) {
-    bloc.add(HomeRemoveInvoice(inv));
-    // invs.remove(inv);
-    // debugPrint("AL ${invs.length}");
-    // setState(() {
-    //   db.removeInvoice(inv);
-    //   // invs.removeWhere((e) {
-    //   //   return e.invId == inv.invId;
-    //   // });
-    // });
-  }
+  void _removeInvoice(Invoice inv) => bloc.add(HomeRemoveInvoice(inv));
 }

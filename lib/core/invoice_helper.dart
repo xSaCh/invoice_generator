@@ -122,7 +122,7 @@ String _numToWord(int number) {
     number ~/= 1000;
     count++;
   }
-  return "Two Lakh and Thirty Six Thousand One Hundred and Fifty Five";
+  // return "Two Lakh and Thirty Six Thousand One Hundred and Fifty Five";
   return words.trim();
 }
 

@@ -11,12 +11,12 @@ class InvoiceAddItem extends InvoiceEvent {
 
 class InvoiceUpdateItem extends InvoiceEvent {
   final Item item;
-
-  InvoiceUpdateItem(this.item);
+  final int index;
+  InvoiceUpdateItem(this.index, this.item);
 }
 
 class InvoiceRemoveItem extends InvoiceEvent {
-  final Item item;
+  final int index;
 
-  InvoiceRemoveItem(this.item);
+  InvoiceRemoveItem(this.index);
 }

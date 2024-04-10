@@ -8,6 +8,7 @@ import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
 import 'package:invoice_bloc/core/_models/types.dart';
 import 'package:invoice_bloc/data/repositories/invoice_repository.dart';
+import 'package:invoice_bloc/global.dart';
 import 'package:invoice_bloc/view/home_page.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -31,7 +32,8 @@ void main() async {
   //     [].cast<Item>());
 
   // // i.save();
-  // await Hive.openBox<Invoice>('invoices')
+  await Hive.openBox<Invoice>('invoices');
+  await Hive.openBox<Customer>('customers');
   //   ..add(i);
   runApp(const MyApp());
 }
@@ -49,7 +51,9 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: BlocProvider(
-          create: (context) => HomeBloc(repository: InvoiceRepository()),
+          create: (context) => HomeBloc(
+              invoiceRepo: Global.ins().invoiceRepository,
+              customerRepo: Global.ins().customerRepository),
           child: const HomePage(),
         ));
   }

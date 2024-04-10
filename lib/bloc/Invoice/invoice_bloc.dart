@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:invoice_bloc/core/_models/customer.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
+import 'package:invoice_bloc/data/repositories/invoice_repository.dart';
+import 'package:invoice_bloc/global.dart';
 import 'package:meta/meta.dart';
 
 part 'invoice_event.dart';
@@ -37,6 +39,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         invoice.customer = event.customer ?? invoice.customer;
         invoice.receivedAmt = event.receivedAmt ?? invoice.receivedAmt;
 
+        if (!invoice.isInBox) Global.ins().invoiceRepository.addInvoice(invoice);
         invoice.save();
         emit(InvoiceUpdated());
       }

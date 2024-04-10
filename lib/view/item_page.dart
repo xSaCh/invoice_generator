@@ -139,7 +139,7 @@ class _ItemPageState extends State<ItemPage> {
                           labelText: "Rate (Price/Unit)"),
                       onChanged: (e) {
                         if (e != '') {
-                          setState(() => newItem.product.unitPrice = double.parse(e!));
+                          setState(() => newItem.product.unitPrice = double.parse(e));
                         }
                       },
                     ),
@@ -242,8 +242,9 @@ class _ItemPageState extends State<ItemPage> {
                                 );
                               }).toList(),
                               onChanged: (c) {
-                                if (c != null)
+                                if (c != null) {
                                   setState(() => newItem.product.gstType = c);
+                                }
                               }),
                         ),
                         const SizedBox(width: 16),

@@ -11,25 +11,30 @@ part 'invoice_state.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   final Invoice invoice;
-  InvoiceBloc({required this.invoice}) : super(InvoiceInitial()) {
+  final InvoiceRepository repo;
+  InvoiceBloc({required this.invoice})
+      : repo = Global.ins().invoiceRepository,
+        super(InvoiceInitial()) {
     on<InvoiceEvent>((event, emit) {
+      if (!invoice.isInBox) repo.addInvoice(invoice);
+
       if (event is InvoiceAddItem) {
         emit(InvoiceUpdating());
-        //TODO: Add Invoice item
-        invoice.items.add(event.item);
-        invoice.save();
+        // invoice.items.add(event.item);
+        // invoice.save();
+        repo.addItemToInvoice(invoice.key, event.item);
         emit(InvoiceUpdated());
       } else if (event is InvoiceRemoveItem) {
         emit(InvoiceUpdating());
-        //TODO: Remove Invoice item
-        invoice.items.removeAt(event.index);
-        invoice.save();
+        // invoice.items.removeAt(event.index);
+        // invoice.save();
+        repo.removeItemToInvoice(invoice.key, event.index);
         emit(InvoiceUpdated());
       } else if (event is InvoiceUpdateItem) {
         emit(InvoiceUpdating());
-        //TODO: Update Invoice item
-        invoice.items[event.index] = event.item;
-        invoice.save();
+        // invoice.items[event.index] = event.item;
+        // invoice.save();
+        repo.updateItemToInvoice(invoice.key, event.index, event.item);
         emit(InvoiceUpdated());
       } else if (event is InvoiceUpdateInvoiceValue) {
         emit(InvoiceUpdating());
@@ -39,8 +44,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         invoice.customer = event.customer ?? invoice.customer;
         invoice.receivedAmt = event.receivedAmt ?? invoice.receivedAmt;
 
-        if (!invoice.isInBox) Global.ins().invoiceRepository.addInvoice(invoice);
-        invoice.save();
+        repo.updateInvoice(invoice);
+        // invoice.save();
         emit(InvoiceUpdated());
       }
     });

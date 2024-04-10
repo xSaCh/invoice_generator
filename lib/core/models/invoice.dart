@@ -45,20 +45,26 @@ class Invoice {
   double getTotal() {
     double tlt = 0;
 
-    for (var i in items) tlt += i.getAmount();
+    for (var i in items) {
+      tlt += i.getAmount();
+    }
     return tlt;
   }
 
   double getSubTotal() {
     double tlt = 0;
 
-    for (var i in items) tlt += i.getSubAmount();
+    for (var i in items) {
+      tlt += i.getSubAmount();
+    }
     return tlt;
   }
 
   double getGstTotal() {
     double tlt = 0;
-    for (var i in items) tlt += i.getGstAmount();
+    for (var i in items) {
+      tlt += i.getGstAmount();
+    }
     return tlt;
   }
 

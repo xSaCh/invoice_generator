@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -155,7 +153,8 @@ class _CustomerPageState extends State<CustomerPage> {
     return TypeAheadField<Customer>(
       controller: custTxtCnt,
       suggestionsCallback: (search) {
-        var iter = customers.where((c) => c.name.toLowerCase().contains(search));
+        var iter =
+            customers.where((c) => c.name.toLowerCase().contains(search.toLowerCase()));
         return iter.toList();
       },
       builder: (context, controller, focusNode) {

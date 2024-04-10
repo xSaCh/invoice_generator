@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "120762187203",
+    "project_id": "flutter-invoice-app",
+    "storage_bucket": "flutter-invoice-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120762187203:android:50dbef4a01def63ea99176",
+        "android_client_info": {
+          "package_name": "com.xSaCh.invoice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeuHPX8jrLQkziS1uUtU5aM6qm-nkq9Hg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

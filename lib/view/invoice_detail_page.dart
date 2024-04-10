@@ -9,9 +9,7 @@ import 'package:invoice_bloc/bloc/Invoice/invoice_bloc.dart';
 // import 'package:invoice_bloc/db/db.dart';
 import 'package:invoice_bloc/core/invoice_helper.dart';
 import 'package:invoice_bloc/core/_models/customer.dart';
-import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
-import 'package:invoice_bloc/data/sources/invoice_data_sources.dart';
 import 'package:invoice_bloc/global.dart';
 import 'package:invoice_bloc/view/item_page.dart';
 // import 'package:invoice_bloc/pages/item_page.dart';
@@ -405,8 +403,6 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
             }),
         OutlinedButton(
             onPressed: () async {
-              // TODO: Fixed hardcoded pid
-
               Item? newItem = await Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) => ItemPage(Item(Product.empty()))));
               if (newItem != null) {

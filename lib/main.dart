@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,15 +10,17 @@ import 'package:invoice_bloc/core/_models/customer.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
 import 'package:invoice_bloc/core/_models/types.dart';
-import 'package:invoice_bloc/data/repositories/invoice_repository.dart';
+import 'package:invoice_bloc/data/sources/invoice_data_sources.dart';
+import 'package:invoice_bloc/firebase_options.dart';
 import 'package:invoice_bloc/global.dart';
 import 'package:invoice_bloc/view/home_page.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
-  debugPrint((await getApplicationDocumentsDirectory()).path);
-
   await Hive.initFlutter();
+
+  debugPrint((await getApplicationDocumentsDirectory()).path);
   Hive.registerAdapter(BankInfoAdapter());
   Hive.registerAdapter(CustomerAdapter());
   Hive.registerAdapter(InvoiceAdapter());
@@ -24,17 +29,16 @@ void main() async {
   Hive.registerAdapter(GSTTypeAdapter());
   Hive.registerAdapter(UnitAdapter());
 
-  // var i = Invoice(
-  //     "22/IT001",
-  //     DateTime.now(),
-  //     0,
-  //     Customer("AA", "Addr", "+91 92440", "email@gmail.com", "CCC@45902AK"),
-  //     [].cast<Item>());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // // i.save();
+  await Permission.manageExternalStorage.request();
+
   await Hive.openBox<Invoice>('invoices');
+  // ..addAll(getInvoices());
   await Hive.openBox<Customer>('customers');
-  //   ..add(i);
+  var a = Hive.box<Invoice>("invoices").values.toList();
+  debugPrint("${a}");
+  // ..addAll(getCustomers());
   runApp(const MyApp());
 }
 

@@ -1,4 +1,8 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:invoice_bloc/bloc/Customer/customer_bloc.dart';
@@ -6,14 +10,19 @@ import 'package:invoice_bloc/bloc/Home/home_bloc.dart';
 import 'package:invoice_bloc/bloc/Invoice/invoice_bloc.dart';
 import 'package:invoice_bloc/core/_models/customer.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
+import 'package:invoice_bloc/core/_models/user.dart';
 // import 'package:invoice_bloc/db/db.dart';
 import 'package:invoice_bloc/core/invoice_helper.dart';
 // import 'package:share_plus/share_plus.dart';
 
 // import 'package:invoice_bloc/invoice_pdf.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
+import 'package:invoice_bloc/invoice_pdf.dart';
 import 'package:invoice_bloc/view/customer_page.dart';
 import 'package:invoice_bloc/view/invoice_detail_page.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share_plus/share_plus.dart';
 // import 'package:invoice_bloc/core/_models/user.dart';
 // import 'package:invoice_bloc/pages/customer_page.dart';
 // import 'package:invoice_bloc/pages/invoice_detail_page.dart';
@@ -50,7 +59,9 @@ class _HomePageState extends State<HomePage> {
               if (newCst == null) return;
               if (!newCst.isInBox) bloc.add(HomeAddCustomer(newCst));
 
-              var lastInvNo = bloc.invoiceRepo.getInvoices().last.invoiceNo;
+              var lastInvNo = "22/IT_000";
+              if (bloc.invoiceRepo.getInvoices().isNotEmpty)
+                lastInvNo = bloc.invoiceRepo.getInvoices().last.invoiceNo;
 
               Invoice? newInvoice = await Navigator.of(context).push(MaterialPageRoute(
                   builder: (ctx) => BlocProvider(
@@ -78,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 100),
-                    if (state is HomeLoaded)
+                    if (state is HomeLoaded && state.invoices.isNotEmpty)
                       ListView.builder(
                           itemCount: state.invoices.length,
                           shrinkWrap: true,
@@ -208,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                       icon: const Icon(Icons.print_outlined),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => _shareInvoicePdf(inv),
                       padding: const EdgeInsets.all(5),
                       constraints:
                           const BoxConstraints(), // override default min size of 48px
@@ -238,9 +249,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _saveInvoice(Invoice inv, String path) async {
-    // var pdf = InvoicePdf(config: await db.getConfig(), invoice: inv);
-    // pdf.save(
-    //     "${await getAppPath()}/${inv.customer.name}${DateFormat("_dd_MM_yyyy").format(DateTime.now())}.pdf");
+    var prs = await Permission.manageExternalStorage.request();
+    if (prs.isDenied) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Denied Permission")));
+      return;
+    }
+
+    var pdf = InvoicePdf(config: InvoiceConfig(user: User.ex2), invoice: inv);
+    pdf.save(
+        "${await getAppPath()}/${inv.customer.name}${DateFormat("_dd_MM_yyyy").format(DateTime.now())}.pdf");
+  }
+
+  void _shareInvoicePdf(Invoice inv) async {
+    var prs = await Permission.manageExternalStorage.request();
+    if (prs.isDenied) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Denied Permission")));
+
+      return;
+    }
+
+    //TODO: Implement share functionaltiy
+    var tmpPath = await getApplicationCacheDirectory();
+    String filePath =
+        "${tmpPath.path}/${inv.customer.name}${DateFormat("_dd_MM_yyyy").format(DateTime.now())}.pdf";
+
+    var pdf = InvoicePdf(config: InvoiceConfig(user: User.ex2), invoice: inv);
+    var data = await pdf.getPdfUint();
+    var file = File(filePath);
+    file.writeAsBytesSync(data);
+
+    while (!file.existsSync()) {}
+    var fil = XFile(filePath);
+    var rslt = await Share.shareXFiles([fil]);
+    inspect(rslt);
   }
 
   String _invCardDate(DateTime dt) {

@@ -9,15 +9,17 @@ class Customer extends HiveObject {
   @HiveField(0)
   String name;
   @HiveField(1)
-  final String address;
+  String address;
   @HiveField(2)
-  final String phone;
+  String phone;
   @HiveField(3)
-  final String email;
+  String email;
   @HiveField(4)
-  final String gstin;
+  String gstin;
   @HiveField(5)
   BankInfo? bankInfo;
 
   Customer(this.name, this.address, this.phone, this.email, this.gstin, {this.bankInfo});
+
+  Customer.empty() : this("", "", "", "", "");
 }

@@ -11,6 +11,8 @@ import 'package:invoice_bloc/core/invoice_helper.dart';
 import 'package:invoice_bloc/core/_models/customer.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
+import 'package:invoice_bloc/data/sources/invoice_data_sources.dart';
+import 'package:invoice_bloc/global.dart';
 import 'package:invoice_bloc/view/item_page.dart';
 // import 'package:invoice_bloc/pages/item_page.dart';
 
@@ -475,7 +477,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
   Widget _suggestionCstTxtField() {
     // final customers = Db.ins().customers;
-    final customers = [].cast<Customer>();
+    final customers = Global.ins().customerRepository.getCustomers();
+
     return TypeAheadField<Customer>(
       suggestionsCallback: (search) {
         var iter =

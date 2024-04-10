@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:invoice_bloc/bloc/Customer/customer_bloc.dart';
 import 'package:invoice_bloc/bloc/Home/home_bloc.dart';
 import 'package:invoice_bloc/bloc/Invoice/invoice_bloc.dart';
+import 'package:invoice_bloc/core/_models/customer.dart';
+import 'package:invoice_bloc/core/_models/item.dart';
 // import 'package:invoice_bloc/db/db.dart';
 import 'package:invoice_bloc/core/invoice_helper.dart';
 // import 'package:share_plus/share_plus.dart';
 
 // import 'package:invoice_bloc/invoice_pdf.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
+import 'package:invoice_bloc/view/customer_page.dart';
 import 'package:invoice_bloc/view/invoice_detail_page.dart';
 // import 'package:invoice_bloc/core/_models/user.dart';
 // import 'package:invoice_bloc/pages/customer_page.dart';
@@ -38,18 +42,29 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
               // // Customer
-              // Customer? newCst = await Navigator.of(context).push(
-              //     MaterialPageRoute(builder: (BuildContext ctx) => const CustomerPage()));
-              // if (newCst == null) return;
+              Customer? newCst = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => BlocProvider(
+                      create: (bctx) => CustomerBloc(customer: Customer.empty()),
+                      child: const CustomerPage())));
 
-              // if (db.getCustomer(newCst.cId) == null) db.addCustomer(newCst);
+              if (newCst == null) return;
+              if (!newCst.isInBox) bloc.add(HomeAddCustomer(newCst));
 
-              // var newInv = db.newInvoice(newCst);
+              var lastInvNo = bloc.invoiceRepo.getInvoices().last.invoiceNo;
 
-              // Invoice? updatedInv = await Navigator.of(context).push(MaterialPageRoute(
-              //     builder: (BuildContext ctx) => InvoiceDetailPage(newInv)));
+              Invoice? newInvoice = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (ctx) => BlocProvider(
+                      create: (bctx) => InvoiceBloc(
+                          invoice: Invoice(
+                              "${lastInvNo.substring(0, lastInvNo.length - 3)}${(int.parse(lastInvNo.substring(lastInvNo.length - 3)) + 1).toString().padLeft(3, '0')}",
+                              DateTime.now(),
+                              0,
+                              newCst,
+                              [].cast<Item>())),
+                      child: const InvoiceDetailPage())));
 
-              // if (updatedInv != null) setState(() => db.addInvoice(updatedInv));
+              if (newInvoice != null) bloc.add(HomeAddInvoice(newInvoice));
+              bloc.add(HomeGetInvoices());
             },
             child: const Icon(Icons.add)),
         body: BlocBuilder<HomeBloc, HomeState>(
@@ -77,16 +92,7 @@ class _HomePageState extends State<HomePage> {
                                           create: (bctx) =>
                                               InvoiceBloc(invoice: state.invoices[i]),
                                           child: const InvoiceDetailPage())));
-                                  debugPrint("Something ");
                                   bloc.add(HomeGetInvoices());
-                                  // Invoice? newInv = await Navigator.of(context).push(
-                                  //     MaterialPageRoute(
-                                  //         builder: (BuildContext ctx) =>
-                                  //             InvoiceDetailPage(db.invoices[i])));
-
-                                  // if (newInv != null) {
-                                  //   setState(() => db.invoices[i] = newInv);
-                                  // }
                                 });
                           })
                     else

@@ -15,14 +15,14 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   InvoiceBloc({required this.invoice})
       : repo = Global.ins().invoiceRepository,
         super(InvoiceInitial()) {
-    on<InvoiceEvent>((event, emit) {
+    on<InvoiceEvent>((event, emit) async {
       if (!invoice.isInBox) repo.addInvoice(invoice);
 
       if (event is InvoiceAddItem) {
         emit(InvoiceUpdating());
         // invoice.items.add(event.item);
         // invoice.save();
-        repo.addItemToInvoice(invoice.key, event.item);
+        await repo.addItemToInvoice(invoice.key, event.item);
         emit(InvoiceUpdated());
       } else if (event is InvoiceRemoveItem) {
         emit(InvoiceUpdating());

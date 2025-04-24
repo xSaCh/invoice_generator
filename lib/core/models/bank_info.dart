@@ -32,8 +32,8 @@ class BankInfo {
   }
 
   static BankInfo ex = BankInfo(
-      bankName: "ICICI BANK LIMITED,DHANDHUKA BRANCH",
+      bankName: "ICICI BANK LIMITED",
       accountNo: "401601500963",
       ifscCode: "ICIC0004016",
-      holderName: "Jaypal Kanzariya");
+      holderName: "Samarth Chauhan");
 }

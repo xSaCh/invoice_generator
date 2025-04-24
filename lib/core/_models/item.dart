@@ -89,3 +89,36 @@ class Item extends HiveObject {
   factory Item.fromJson(String source) =>
       Item.fromMap(json.decode(source) as Map<String, dynamic>);
 }
+
+List<Product> testProducts = [
+  Product(
+    "Kurta",
+    1500.0,
+    unit: Unit.pcs,
+    hsc: 6104,
+  ),
+  Product(
+    "Saree",
+    2500.0,
+    unit: Unit.pcs,
+    hsc: 6206,
+  ),
+  Product(
+    "Jeans",
+    2000.0,
+    unit: Unit.pcs,
+    hsc: 6103,
+  ),
+  Product(
+    "T-Shirt",
+    800.0,
+    unit: Unit.pcs,
+    hsc: 6109,
+  ),
+  Product(
+    "Lehenga",
+    5000.0,
+    unit: Unit.pcs,
+    hsc: 6211,
+  ),
+];

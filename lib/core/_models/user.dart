@@ -53,10 +53,10 @@ class User {
       bankInfo: BankInfo.ex);
 
   static User ex2 = User(
-      name: "Shiv Enterprise",
-      address: "77, Adhard Estate, Nr. Palican Estate Kathwada GIDC, Ahmedabad, 382430",
-      phone: "9328623148",
-      email: "kanzariyajaypal22@gmail..com",
+      name: "Samarth Enterprise",
+      address: "77, Adhard Estate, Ahmedabad, 382430",
+      phone: "9426824765",
+      email: "samarthchauhan@gmail..com",
       gstin: "24JYTPK7181N1ZB",
       bankInfo: BankInfo.ex);
 }

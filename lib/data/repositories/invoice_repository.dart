@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:invoice_bloc/core/_models/invoice.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
 import 'package:invoice_bloc/data/firebase_service.dart';
+import 'package:invoice_bloc/global.dart';
 
 class InvoiceRepository {
   late Box<Invoice> box;
@@ -17,7 +18,11 @@ class InvoiceRepository {
   InvoiceRepository() {
     box = Hive.box<Invoice>('invoices');
   }
-  List<Invoice> getInvoices() {
+  Future<List<Invoice>> getInvoices() async {
+    try {
+      if (Global.ins().isGuest) return box.values.toList().cast<Invoice>();
+      return FireBaseService.ins().getAllInvoices();
+    } catch (e) {}
     return box.values.toList().cast<Invoice>();
   }
 
@@ -31,17 +36,17 @@ class InvoiceRepository {
     FireBaseService.ins().addInvoice(inv);
   }
 
-  void removeInvoice(int key) {
+  void removeInvoice(dynamic key) {
     box.delete(key);
   }
 
-  void addItemToInvoice(int key, Item item) {
+  Future addItemToInvoice(int key, Item item) async {
     var inv = box.get(key);
     if (inv != null) {
       inv.addItem(item);
       inv.save();
     }
-    FireBaseService.ins().addItemToInvoice(key, item);
+    await FireBaseService.ins().addItemToInvoice(key, item);
   }
 
   void removeItemToInvoice(int key, int index) {
@@ -65,5 +70,11 @@ class InvoiceRepository {
   void updateInvoice(Invoice newInvoice) {
     newInvoice.save();
     FireBaseService.ins().updateInvoice(newInvoice);
+  }
+
+  Invoice putInvoice(String id, Map<String, dynamic> data) {
+    var inv = Invoice.fromMap(data);
+    box.put(id, inv);
+    return inv;
   }
 }

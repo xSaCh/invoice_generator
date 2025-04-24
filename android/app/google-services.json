@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "120762187203",
     "project_id": "flutter-invoice-app",
-    "storage_bucket": "flutter-invoice-app.appspot.com"
+    "storage_bucket": "flutter-invoice-app.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,12 @@
           "package_name": "com.xSaCh.invoice"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "120762187203-suh36d86ndojmdlh31a0q2u8o2o0mq4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCeuHPX8jrLQkziS1uUtU5aM6qm-nkq9Hg"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120762187203-suh36d86ndojmdlh31a0q2u8o2o0mq4i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -8,6 +8,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:invoice_bloc/core/invoice_helper.dart';
 import 'package:invoice_bloc/core/_models/item.dart';
 import 'package:invoice_bloc/core/_models/types.dart';
+import 'package:invoice_bloc/data/repositories/product_repository.dart';
 
 class ItemPage extends StatefulWidget {
   final Item item;
@@ -32,23 +33,24 @@ class _ItemPageState extends State<ItemPage> {
     super.initState();
 
     newItem = widget.item;
+    initCont();
   }
 
   void initCont() {
     un = newItem.product.unit;
-
-    taxTxtCtn.text = newItem.getGstAmount().toStringAsFixed(2);
     itmTxtCtn.text = newItem.product.name;
     qtyTxtCtn.text = newItem.quantities.toString();
     rateTxtCtn.text = newItem.product.unitPrice.toString();
-    hscTxtCtn.text = newItem.product.hsc.toString();
+    hscTxtCtn.text = (newItem.product.hsc ?? 0).toString();
+    taxTxtCtn.text = newItem.getGstAmount().toStringAsFixed(2);
+
   }
 
   @override
   Widget build(BuildContext context) {
     // initItem();
     // initTxtCont();
-    initCont();
+    // initCont();
 
     return Scaffold(
       appBar: AppBar(
@@ -56,10 +58,20 @@ class _ItemPageState extends State<ItemPage> {
         actions: [
           IconButton(
               onPressed: () {
-                debugPrint(itmTxtCtn.text);
-                debugPrint(taxTxtCtn.text);
-                debugPrint(un.toString());
-                inspect(newItem);
+                // debugPrint(itmTxtCtn.text);
+                // debugPrint(taxTxtCtn.text);
+                // debugPrint(un.toString());
+                // inspect(newItem);
+                newItem.quantities = int.parse(qtyTxtCtn.text);
+                newItem.product.unitPrice = double.parse(rateTxtCtn.text);
+                newItem.product.hsc = int.parse(hscTxtCtn.text);
+                newItem.product.unit = un;
+                newItem.product.name = itmTxtCtn.text;
+
+                if (!newItem.product.isInBox) {
+                  ProductRepository().addProduct(newItem.product);
+                }
+                newItem.product.save();
 
                 Navigator.of(context).pop(newItem);
               },
@@ -107,8 +119,8 @@ class _ItemPageState extends State<ItemPage> {
                     child: DropdownButtonFormField(
                         decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            contentPadding:
-                                EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 12),
                             labelText: "Unit"),
                         value: un,
                         items: Unit.values.map((e) {
@@ -131,7 +143,8 @@ class _ItemPageState extends State<ItemPage> {
                   Expanded(
                     child: TextFormField(
                       controller: rateTxtCtn,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
@@ -165,7 +178,10 @@ class _ItemPageState extends State<ItemPage> {
               SizedBox(height: 40),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text("SubTotal"), Text(sAmount(newItem.getSubAmount()))],
+                children: [
+                  Text("SubTotal"),
+                  Text(sAmount(newItem.getSubAmount()))
+                ],
               ),
               SizedBox(height: 8),
               Row(
@@ -179,7 +195,8 @@ class _ItemPageState extends State<ItemPage> {
                         Expanded(
                           child: TextFormField(
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r"[0-9.]"))
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r"[0-9.]"))
                               ],
                               keyboardType: TextInputType.number,
                               decoration: const InputDecoration(
@@ -187,27 +204,33 @@ class _ItemPageState extends State<ItemPage> {
                                   border: OutlineInputBorder(),
                                   suffixIcon: Padding(
                                       padding: EdgeInsets.all(8.0),
-                                      child: Icon(Icons.attach_money_rounded, size: 12)),
-                                  suffixIconConstraints: BoxConstraints.tightForFinite(),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 2, horizontal: 12)),
+                                      child: Icon(Icons.attach_money_rounded,
+                                          size: 12)),
+                                  suffixIconConstraints:
+                                      BoxConstraints.tightForFinite(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 12)),
                               style: TextStyle(fontSize: 12)),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: TextFormField(
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                   isDense: true,
                                   border: OutlineInputBorder(),
                                   suffixIcon: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Icon(Icons.percent_rounded, size: 12)),
-                                  suffixIconConstraints: BoxConstraints.tightForFinite(),
+                                      child: Icon(Icons.percent_rounded,
+                                          size: 12)),
+                                  suffixIconConstraints:
+                                      BoxConstraints.tightForFinite(),
                                   // contentPadding: EdgeInsets.zero,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 2, horizontal: 12)),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 12)),
                               style: TextStyle(fontSize: 12)),
                         )
                       ],
@@ -230,10 +253,11 @@ class _ItemPageState extends State<ItemPage> {
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 isDense: true,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 2, horizontal: 12),
                               ),
-                              style: TextStyle(fontSize: 12, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.black),
                               value: newItem.product.gstType,
                               items: GSTType.values.map((e) {
                                 return DropdownMenuItem(
@@ -258,10 +282,12 @@ class _ItemPageState extends State<ItemPage> {
                                   border: OutlineInputBorder(),
                                   suffixIcon: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Icon(Icons.money_rounded, size: 12)),
-                                  suffixIconConstraints: BoxConstraints.tightForFinite(),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 2, horizontal: 12)),
+                                      child:
+                                          Icon(Icons.money_rounded, size: 12)),
+                                  suffixIconConstraints:
+                                      BoxConstraints.tightForFinite(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 2, horizontal: 12)),
                               style: TextStyle(fontSize: 12)),
                         )
                       ],
@@ -291,12 +317,12 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Widget _suggestionCstTxtField() {
-    // final products = Db.ins().products;
-    final products = [].cast<Product>();
+    final products = ProductRepository().getProducts();
+    // final products = [].cast<Product>();
     return TypeAheadField<Product>(
       suggestionsCallback: (search) {
-        var iter =
-            products.where((c) => c.name.toLowerCase().contains(search.toLowerCase()));
+        var iter = products
+            .where((c) => c.name.toLowerCase().contains(search.toLowerCase()));
         return iter.toList();
       },
       builder: (context, controller, focusNode) {
@@ -319,10 +345,11 @@ class _ItemPageState extends State<ItemPage> {
       },
       onSelected: (product) {
         debugPrint("Pata nahi kuch to copy karneka he");
-        // setState(() {
-        //   newItem.product = Product.copy(product);
-        //   itmTxtCtn.text = product.name;
-        // });
+        setState(() {
+          newItem.product = product;
+          itmTxtCtn.text = product.name;
+          initCont();
+        });
       },
       controller: itmTxtCtn,
     );

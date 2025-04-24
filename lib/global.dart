@@ -11,6 +11,7 @@ class Global {
 
   final InvoiceRepository invoiceRepository;
   final CustomerRepository customerRepository;
+  bool isGuest = false;
   Global()
       : invoiceRepository = InvoiceRepository(),
         customerRepository = CustomerRepository();
